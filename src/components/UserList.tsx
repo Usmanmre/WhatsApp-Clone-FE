@@ -1,4 +1,6 @@
+
 import useSocketConnection from '../hooks/useSocketConnection';
+import { usePresenceStore } from '../store/presence.store';
 
 export interface ChatUser {
   _id: string;
@@ -24,33 +26,55 @@ const getInitials = (name: string) =>
     .join('')
     .toUpperCase();
 
-
 export default function UserList({
   users,
   selectedUserId,
   onSelectUser,
 }: UserListProps) {
   const socketStatus = useSocketConnection();
+
+  const onlineUsers = usePresenceStore((state) => state.onlineUsers);
+
   return (
     <aside className="flex h-full min-h-0 flex-col border-r border-slate-200 bg-slate-400">
+
       <div className="border-b border-slate-100 p-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-slate-900">Messages</h2>
             <p className="mt-1 text-xs text-slate-500">
-              {users?.length} conversations
+              {users.length} conversations
             </p>
           </div>
 
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-            Chat
-          </span>
+          {/* <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1">
+            <span
+              className={`h-2 w-2 rounded-full ${
+                socketStatus === 'connected'
+                  ? 'bg-emerald-500'
+                  : socketStatus === 'connecting'
+                    ? 'bg-amber-500'
+                    : 'bg-red-500'
+              }`}
+            />
+
+            <span className="text-xs font-medium text-slate-600">
+              {socketStatus === 'connected'
+                ? 'Connected'
+                : socketStatus === 'connecting'
+                  ? 'Connecting...'
+                  : socketStatus === 'error'
+                    ? 'Connection error'
+                    : 'Disconnected'}
+            </span>
+          </div> */}
         </div>
 
         <div className="relative mt-5">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
             ⌕
           </span>
+
           <input
             type="text"
             placeholder="Search people..."
@@ -64,22 +88,26 @@ export default function UserList({
           Recent conversations
         </p>
 
-        {users?.map((user) => {
+        {users.map((user) => {
           const selected = selectedUserId === user._id;
+          const isOnline = onlineUsers.has(user._id);
+   console.log(' user:', user);
+   console.log('Online Users:', onlineUsers);
 
           return (
             <button
               key={user._id}
               onClick={() => onSelectUser(user)}
-              className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition ${selected
+              className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition ${
+                selected
                   ? 'bg-blue-50 ring-1 ring-blue-100'
                   : 'hover:bg-slate-50'
-                }`}
+              }`}
             >
               <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-semibold text-white">
                 {getInitials(user.name)}
 
-                {user.online && (
+                {isOnline && (
                   <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
                 )}
               </div>
@@ -106,25 +134,6 @@ export default function UserList({
                     </span>
                   )}
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`h-2 w-2 rounded-full ${socketStatus === 'connected'
-                      ? 'bg-emerald-500'
-                      : socketStatus === 'connecting'
-                        ? 'bg-amber-500'
-                        : 'bg-red-500'
-                    }`}
-                />
-                <span className="text-xs text-slate-500">
-                  {socketStatus === 'connected'
-                    ? 'Connected'
-                    : socketStatus === 'connecting'
-                      ? 'Connecting...'
-                      : socketStatus === 'error'
-                        ? 'Connection error'
-                        : 'Disconnected'}
-                </span>
               </div>
             </button>
           );

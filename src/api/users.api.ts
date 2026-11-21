@@ -1,13 +1,21 @@
+
 import type { User } from '../store/auth.store';
+import { usePresenceStore } from '../store/presence.store';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-interface GetAllUsersResponse {
-  users: User[];
+export interface ChatUser extends User {
+  online: boolean;
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount?: number;
 }
 
-export const getAllUsersApi = async (
-): Promise<GetAllUsersResponse> => {
+interface GetAllUsersResponse {
+  users: ChatUser[];
+}
+
+export const getAllUsersApi = async (): Promise<GetAllUsersResponse> => {
   const response = await fetch(`${API_URL}/users/all`, {
     method: 'GET',
     headers: {
@@ -15,12 +23,18 @@ export const getAllUsersApi = async (
     },
   });
 
-  const data = await response.json();
-
+  const data: ChatUser[] = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || 'Failed to fetch users');
+    throw new Error('Failed to fetch users');
   }
 
-  return {users: data};
+  // Save online user IDs in Zustand
+  const onlineUserIds = data
+    .filter((user) => user.online)
+    .map((user) => user._id);
+
+  usePresenceStore.getState().setOnlineUsers(onlineUserIds);
+
+  return { users: data };
 };

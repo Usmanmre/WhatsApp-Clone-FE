@@ -6,7 +6,10 @@ import { useAuthStore } from '../store/auth.store';
 import UserList, { type ChatUser } from '../components/UserList';
 import ChatWindow from '../components/ChatWindow';
 import { getAllUsersApi } from '../api/users.api';
+import { usePresence } from '../hooks/usePresence';
 export default function DashboardPage() {
+usePresence();
+  
   const [users, setUsers] = useState<ChatUser[]>([]);
 
   const fetchUsers = async () => {
