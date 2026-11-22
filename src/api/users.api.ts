@@ -1,15 +1,10 @@
 
+import { ChatUser } from '../components/UserList';
 import type { User } from '../store/auth.store';
 import { usePresenceStore } from '../store/presence.store';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export interface ChatUser extends User {
-  online: boolean;
-  lastMessage?: string;
-  lastMessageTime?: string;
-  unreadCount?: number;
-}
 
 interface GetAllUsersResponse {
   users: ChatUser[];
