@@ -1,14 +1,9 @@
+import { Message } from "../constants/types";
+
 const API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export interface Message {
-  _id: string;
-  sender: string;
-  receiver: string;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 export const getConversationMessagesApi = async (
   otherUserId: string,

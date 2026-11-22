@@ -10,6 +10,7 @@ import { getAllUsersApi } from '../api/users.api';
 
 import { usePresence } from '../hooks/usePresence';
 import useSocketConnection from '../hooks/useSocketConnection';
+import { useIncomingMessages } from '../hooks/useIncomingMessages';
 
 export default function DashboardPage() {
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
@@ -21,6 +22,7 @@ export default function DashboardPage() {
   // Socket lifecycle and presence subscriptions
   useSocketConnection();
   usePresence();
+  useIncomingMessages();
 
   // Fetch users using TanStack Query
   const {

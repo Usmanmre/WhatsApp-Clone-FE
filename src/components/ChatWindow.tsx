@@ -6,10 +6,9 @@ import type { ChatUser } from './UserList';
 import {
   getConversationMessagesApi,
   sendMessageApi,
-  type Message,
 } from '../services/chat.api';
 
-import { chatKeys } from '../api/chat.keys';
+import { chatKeys } from '../constants/chat.keys';
 
 import {
   useMutation,
@@ -18,6 +17,7 @@ import {
 } from '@tanstack/react-query';
 
 import { usePresenceStore } from '../store/presence.store';
+import { Message } from '../constants/types';
 
 interface ChatWindowProps {
   selectedUser: ChatUser | null;
@@ -158,11 +158,11 @@ export default function ChatWindow({
             </h2>
 
             <div className="mt-1 flex items-center gap-1.5">
-              <span
+              {/* <span
                 className={`h-1.5 w-1.5 rounded-full ${
                   isOnline ? 'bg-emerald-400' : 'bg-slate-500'
                 }`}
-              />
+              /> */}
 
               <p
                 className={`text-xs ${
